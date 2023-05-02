@@ -1,6 +1,8 @@
-import * as THREE from 'three'
+import { TextureLoader, CubeTextureLoader } from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import EventEmitter from './EventEmitter.js'
+import Experience from "../Experience.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 
 export default class Resources extends EventEmitter
 {
@@ -11,6 +13,8 @@ export default class Resources extends EventEmitter
         this.sources = sources
 
         this.items = {}
+        this.experience = new Experience()
+        this.scene = this.experience.scene
         this.toLoad = this.sources.length
         this.loaded = 0
 
@@ -20,10 +24,14 @@ export default class Resources extends EventEmitter
 
     setLoaders()
     {
+
         this.loaders = {}
+        this.loaders.dracoLoader = new DRACOLoader()
+        this.loaders.dracoLoader.setDecoderPath('/draco/')
         this.loaders.gltfLoader = new GLTFLoader()
-        this.loaders.textureLoader = new THREE.TextureLoader()
-        this.loaders.cubeTextureLoader = new THREE.CubeTextureLoader()
+        this.loaders.gltfLoader.setDRACOLoader(this.loaders.dracoLoader)
+        this.loaders.textureLoader = new TextureLoader()
+        this.loaders.cubeTextureLoader = new CubeTextureLoader()
     }
 
     startLoading()
@@ -74,5 +82,22 @@ export default class Resources extends EventEmitter
         {
             this.trigger('ready')
         }
+    }
+
+    destroy() {
+        this.sources = null
+        this.items = null
+        this.experience = null
+        this.scene = null
+        this.toLoad = null
+        this.loaded = null
+        this.setLoaders = null
+        this.startLoading = null
+
+        this.loaders.dracoLoader = null
+        this.loaders.gltfLoader = null
+        this.loaders.textureLoader = null
+        this.loaders.cubeTextureLoader = null
+        this.loaders = null
     }
 }
