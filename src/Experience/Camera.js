@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import { PerspectiveCamera } from 'three'
 import Experience from './Experience.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
@@ -11,21 +11,29 @@ export default class Camera
         this.scene = this.experience.scene
         this.canvas = this.experience.canvas
 
+        this.debug = this.experience.debug
+        this.control = null
+
+        this.isOrbitControlActive = false
+
+        if (this.debug.active)
+        {
+            this.debugFolder = this.debug.ui.addFolder('Camera')
+            this.debugFolder.add(this, 'isOrbitControlActive')
+            this.debugFolder.close()
+        }
+
         this.setInstance()
-        //this.setControls()
     }
 
     setInstance()
     {
-        this.instance = new THREE.PerspectiveCamera(35, this.sizes.width / this.sizes.height, 0.1, 100)
-        this.instance.position.set(6, 4, 8)
+        this.instance = new PerspectiveCamera(60, this.sizes.width / this.sizes.height, 1, 5000)
+        this.instance.position.set(-5, 6, -10)
         this.scene.add(this.instance)
-    }
 
-    setControls()
-    {
-        this.controls = new OrbitControls(this.instance, this.canvas)
-        this.controls.enableDamping = true
+        this.control = new OrbitControls(this.instance, this.canvas)
+        this.control.enableDamping = true
     }
 
     resize()
@@ -36,6 +44,13 @@ export default class Camera
 
     update()
     {
-        this.controls.update()
+        if (this.isOrbitControlActive)
+        {
+            this.control.update()
+        }
+    }
+
+    destroy() {
+        this.control.dispose()
     }
 }
