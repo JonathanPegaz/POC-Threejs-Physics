@@ -1,4 +1,4 @@
-# POC Threejs CharacterController
+# POC Threejs Physics
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
